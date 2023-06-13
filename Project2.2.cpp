@@ -18,6 +18,8 @@ struct STUDENT {
 
 int getNumberOfStudents(string, bool &);
 void randomOcens(STUDENT[], int, int, int, int);
+double avgRaiting(STUDENT[], int, int);
+int studentsOverAvg(STUDENT[], int, int, double);
 
 int main() {
     cout << "Lukasz Belka nr. indeksu 156162, grupa D1, semestr 2, rok 1" << endl;
@@ -35,7 +37,14 @@ int main() {
     maxNum = 5;
 
     randomOcens(tabStudents, N, minNum, maxNum, numberOfOcens);
-    
+
+    double avgRaitingAll = 0;
+    avgRaitingAll = avgRaiting(tabStudents, N, numberOfOcens);
+    cout << "srednia ocena wszystkich studentow wynosi " << avgRaitingAll << endl;
+
+    int numSutudentsOverAvg = 0;
+    numSutudentsOverAvg = studentsOverAvg(tabStudents, N, numberOfOcens, avgRaitingAll);
+    cout << "liczba studnetow studentow powyzej wynosi " << avgRaitingAll << endl;
     // for(int i = 0; i<=N; i++){
     //     for(int j=0; j<=numberOfOcens; j++){
     //     cout<< tabStudents[i].nazwisko << " ocena " << tabStudents[i].oceny << endl;
@@ -46,15 +55,47 @@ int main() {
     return 0;
 }
 
-void randomOcens(STUDENT tab[], int N, int minNum, int maxNum, int numberOfOcens) {
-    srand(time(0));
-    maxNum = maxNum * 10;
-    minNum =  minNum * 10;
+int studentsOverAvg(STUDENT tab[], int N, int numberOfOcens, double avgRaitingAll){
+    double sumRainngStudnet = 0;
+    int numSutudentsOverAvg = 0;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < numberOfOcens; j++) {
+                sumRainngStudnet += tab[i].oceny[j];
+            }
+            tab[i].srednia = sumRainngStudnet / numberOfOcens;
+            sumRainngStudnet = 0;
+            if(tab[i].srednia > avgRaitingAll){
+                numSutudentsOverAvg++;
+            }
+            cout << tab[i].srednia << "       "<< endl;
+        }
+    return numSutudentsOverAvg;
+}
+
+double avgRaiting(STUDENT tab[], int N, int numberOfOcens){
+    double avgRaitingAll = 0;
+    double sumRainngAll = 0;
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < numberOfOcens; j++) {
-            tab[i].oceny[j] = (rand() % (maxNum - minNum) + minNum) / 10.0;
+            sumRainngAll += tab[i].oceny[j];
+        }
+    }
+    sumRainngAll = sumRainngAll / (N * numberOfOcens);
+    return sumRainngAll;
+}
 
-            cout << tab[i].oceny[j]<< "     ";
+void randomOcens(STUDENT tab[], int N, int minNum, int maxNum, int numberOfOcens) {
+    srand(time(0));
+    // maxNum = maxNum * 10;
+    // minNum =  minNum * 10;
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < numberOfOcens; j++) {
+            //tab[i].oceny[j] = (rand() % (maxNum - minNum) + minNum) / 10.0;
+            tab[i].oceny[j] = (rand() % (maxNum - minNum) + minNum);
+            int halfFlag = rand() % 2;
+            if(halfFlag == 1){
+                tab[i].oceny[j] += 0.5;
+            }
         }
     }
 }
@@ -63,7 +104,7 @@ int getNumberOfStudents(string filename, bool &cantOpenFileFlag) {
     ifstream file(filename);
     int L = 0;
     int userInput = 0;
-    cout << "Ilu chcesz wczytać studentów? " << endl;
+    cout << "Ilu chcesz wczytać studentow? " << endl;
     cin >> userInput;
     if (file.is_open()) {
         string line;
@@ -71,11 +112,11 @@ int getNumberOfStudents(string filename, bool &cantOpenFileFlag) {
             L++;
         }
     } else {
-        cout << "Ups, coś poszło nie tak. Nie mogę otworzyć pliku. Zamykam." << endl;
+        cout << "Ups, cos poszło nie tak. Nie mogę otworzyć pliku. Zamykam." << endl;
         cantOpenFileFlag = true;
     }
     if(userInput > L){
-        cout << "Podana liczba przekracza maksymalną liczbę wczytanych studentów: " << L << endl;
+        cout << "Podana liczba przekracza maksymalną liczbę wczytanych studentow: " << L << endl;
         return L;
     } else {
         return userInput;
