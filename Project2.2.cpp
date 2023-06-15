@@ -17,18 +17,25 @@ struct STUDENT {
 };
 
 int getNumberOfStudents(string, bool &);
+void getStudents(STUDENT[], int, string, bool &);
 void randomOcens(STUDENT[], int, int, int, int);
 double avgRaiting(STUDENT[], int, int);
 int studentsOverAvg(STUDENT[], int, int, double);
+void diplayStudentsData(STUDENT[], int, int, double);
 
 int main() {
     cout << "Lukasz Belka nr. indeksu 156162, grupa D1, semestr 2, rok 1" << endl;
 
-    bool cantOpenFileFlag;
+    bool cantOpenFileFlag = false;
     int N = getNumberOfStudents("done.txt", cantOpenFileFlag);
+    if(cantOpenFileFlag == true){
+        return 0;
+    }
 
     STUDENT* tabStudents = new STUDENT[N];
     cout << N << endl;
+
+    getStudents(tabStudents, N, "done.txt", cantOpenFileFlag);
 
     srand(time(0));
 
@@ -45,6 +52,8 @@ int main() {
     int numSutudentsOverAvg = 0;
     numSutudentsOverAvg = studentsOverAvg(tabStudents, N, numberOfOcens, avgRaitingAll);
     cout << "liczba studnetow studentow powyzej wynosi " << avgRaitingAll << endl;
+
+    diplayStudentsData(tabStudents, N, numberOfOcens, avgRaitingAll);
     // for(int i = 0; i<=N; i++){
     //     for(int j=0; j<=numberOfOcens; j++){
     //     cout<< tabStudents[i].nazwisko << " ocena " << tabStudents[i].oceny << endl;
@@ -53,6 +62,54 @@ int main() {
     delete[] tabStudents;
 
     return 0;
+}
+
+void getStudents(STUDENT tab[], int N, string filename, bool& cantOpenFileFlag) {
+    ifstream file(filename);
+    if (file.is_open()) {
+        for (int i = 0; i < N; i++) {
+            string name;
+            string surname;
+
+            file >> name >> surname;
+
+            tab[i].imie = name;
+            tab[i].nazwisko = surname;
+
+            cout << "123";
+            cout << name;
+        }
+    } else {
+        cout << "Ups, coś poszło nie tak. Nie mogę otworzyć pliku. Zamykam." << endl;
+        cantOpenFileFlag = true;
+    }
+    file.close();
+}
+
+// void getStudents(STUDENT tab[], int N, string filename, bool &cantOpenFileFlag){
+//     ifstream file(filename);
+//     if (file.is_open()) {
+//         while(file.peek()!=EOF){
+//             string zmienna; 
+//             file >> zmienna;
+
+//             cout << zmienna << " 123 ";
+//             zmienna = "";
+//         }
+//     } else {
+//         cout << "Ups, cos poszło nie tak. Nie mogę otworzyć pliku. Zamykam." << endl;
+//         cantOpenFileFlag = true;
+//     }
+// }
+
+void diplayStudentsData(STUDENT tab[], int N, int numberOfOcens, double avgRaitingAll){
+    cout<< "Dane studentow w czytelnym sposobie " << endl;
+        for (int i = 0; i < N; i++) {
+            cout << "Imie: " << tab[i].imie << " Nazwisko: " << tab[i].nazwisko << " Srednia: " << tab[i].srednia << " Oceny: ";
+            for (int j = 0; j < numberOfOcens; j++) {
+                cout<< tab[i].oceny[j] << ", ";
+            }
+        }
 }
 
 int studentsOverAvg(STUDENT tab[], int N, int numberOfOcens, double avgRaitingAll){
@@ -67,7 +124,6 @@ int studentsOverAvg(STUDENT tab[], int N, int numberOfOcens, double avgRaitingAl
             if(tab[i].srednia > avgRaitingAll){
                 numSutudentsOverAvg++;
             }
-            cout << tab[i].srednia << "       "<< endl;
         }
     return numSutudentsOverAvg;
 }
