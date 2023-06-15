@@ -29,63 +29,73 @@ void search(STUDENT[], int, int);
 
 
 int main() {
-    cout << "Lukasz Belka nr. indeksu 156162, grupa D1, semestr 2, rok 1" << endl;
+    string restart = "R";
+    while (restart == "R"){
+        cout << "Lukasz Belka nr. indeksu 156162, grupa D1, semestr 2, rok 1" << endl;
+        cout << "Projekt 2.2 - program do obslugi listy studentow tj, zapisywania, wyswietlania, przeszukiwania " << endl;
+        cout << endl;
+        bool cantOpenFileFlag = false;
+        int N = getNumberOfStudents("dane.txt", cantOpenFileFlag);
+        if(cantOpenFileFlag == true){
+            return 0;
+        }
 
-    bool cantOpenFileFlag = false;
-    int N = getNumberOfStudents("dane.txt", cantOpenFileFlag);
-    if(cantOpenFileFlag == true){
-        return 0;
+        STUDENT* tabStudents = new STUDENT[N];
+
+        //cout << N << endl;
+
+        getStudents(tabStudents, N, "dane.txt", cantOpenFileFlag);
+        if(cantOpenFileFlag == true){
+            return 0;
+        }
+
+        srand(time(0));
+
+        int minNum, maxNum;
+        minNum = 1;
+        maxNum = 5;
+
+        randomSchoolGrade(tabStudents, N, minNum, maxNum, numberOfSchoolGrade);
+
+        double avgRaitingAll = 0;
+        avgRaitingAll = avgRaiting(tabStudents, N, numberOfSchoolGrade);
+
+
+        int numSutudentsOverAvg = 0;
+        numSutudentsOverAvg = studentsOverAvg(tabStudents, N, numberOfSchoolGrade, avgRaitingAll);
+
+        displayStudentsData(tabStudents, N, numberOfSchoolGrade, "Dane studentow ");
+        cout << endl;
+        cout << "srednia ocena wszystkich studentow wynosi " << avgRaitingAll << endl;
+        cout << "liczba studnetow studentow powyzej wynosi " << numSutudentsOverAvg << endl;
+
+        STUDENT* tabBestStudents = new STUDENT[numSutudentsOverAvg];
+        takeAndSortStudents(tabStudents, tabBestStudents, N, avgRaitingAll);
+
+
+        displayStudentsData(tabBestStudents, numSutudentsOverAvg, numberOfSchoolGrade,"Posortowane dane najlepszych studentow (powyzej sredniej) wedlug sredniej ");
+
+        setStudents(tabBestStudents, numSutudentsOverAvg, cantOpenFileFlag);
+        if(cantOpenFileFlag == true){
+            return 0;
+        }
+
+        search(tabStudents, N, numberOfSchoolGrade);
+
+        delete[] tabStudents;
+        cout << "Jesli chcesz ponowic pracę programu od zera wprowadz R , jesli nie nacisnij dowolny inny symbol i zatwiedz" << endl;
+        cin >> restart;
+        cout << endl;
+        cout << "<< RESTART >>" << endl;
+        cout << endl;
     }
-
-    STUDENT* tabStudents = new STUDENT[N];
-
-    //cout << N << endl;
-
-    getStudents(tabStudents, N, "dane.txt", cantOpenFileFlag);
-    if(cantOpenFileFlag == true){
-        return 0;
-    }
-
-    srand(time(0));
-
-    int minNum, maxNum;
-    minNum = 1;
-    maxNum = 5;
-
-    randomSchoolGrade(tabStudents, N, minNum, maxNum, numberOfSchoolGrade);
-
-    double avgRaitingAll = 0;
-    avgRaitingAll = avgRaiting(tabStudents, N, numberOfSchoolGrade);
-
-
-    int numSutudentsOverAvg = 0;
-    numSutudentsOverAvg = studentsOverAvg(tabStudents, N, numberOfSchoolGrade, avgRaitingAll);
-
-    displayStudentsData(tabStudents, N, numberOfSchoolGrade, "Dane studentow ");
-    cout << endl;
-    cout << "srednia ocena wszystkich studentow wynosi " << avgRaitingAll << endl;
-    cout << "liczba studnetow studentow powyzej wynosi " << numSutudentsOverAvg << endl;
-
-    STUDENT* tabBestStudents = new STUDENT[numSutudentsOverAvg];
-    takeAndSortStudents(tabStudents, tabBestStudents, N, avgRaitingAll);
-
-
-    displayStudentsData(tabBestStudents, numSutudentsOverAvg, numberOfSchoolGrade,"Posortowane dane najlepszych studentow (powyzej sredniej) wedlug sredniej ");
-
-    setStudents(tabBestStudents, numSutudentsOverAvg, cantOpenFileFlag);
-    if(cantOpenFileFlag == true){
-        return 0;
-    }
-
-    search(tabStudents, N, numberOfSchoolGrade);
-
-    delete[] tabStudents;
 
     return 0;
 }
 
 void search(STUDENT tab[], int N, int numberOfSchoolGrade){
     int chose = 19;
+    while ( chose != 0 ){
     cout << endl;
     cout << " Podaj numer kategorii wysuzkiwania :" << endl;
     cout << " 1) Indeks " << endl;
@@ -95,188 +105,189 @@ void search(STUDENT tab[], int N, int numberOfSchoolGrade){
     cout << " 5) Konkretna ocena " << endl;
     cout << " 0) Wyjscie " << endl;
     cin >> chose;
+        switch (chose){
+            case 1:{
+                int idxSerched = 0;
+                cout << "Podaj nr. indeksu szukanej osoby " << endl;
+                cin >> idxSerched;
 
-    switch (chose){
-        case 1:{
-            int idxSerched = 0;
-            cout << "Podaj nr. indeksu szukanej osoby " << endl;
-            cin >> idxSerched;
-
-            int searchCouter = 0;
-            for(int i=0; i<N; i++){
-                if(idxSerched == tab[i].indeks){
-                    searchCouter ++;
+                int searchCouter = 0;
+                for(int i=0; i<N; i++){
+                    if(idxSerched == tab[i].indeks){
+                        searchCouter ++;
+                    }
                 }
-            }
-            STUDENT* serchedStudentsTab = new STUDENT[searchCouter];
-            int counter = 0;
-            for(int i=0; i<N; i++){
-                if(idxSerched == tab[i].indeks){
-                    serchedStudentsTab[counter] = tab[i];
-                    counter++;
+                STUDENT* serchedStudentsTab = new STUDENT[searchCouter];
+                int counter = 0;
+                for(int i=0; i<N; i++){
+                    if(idxSerched == tab[i].indeks){
+                        serchedStudentsTab[counter] = tab[i];
+                        counter++;
+                    }
                 }
-            }
-            if(counter == 0){
-                cout << "Nie znalezniono. Brak danych" << endl;
-            } else {
-                displayStudentsData(serchedStudentsTab, counter, numberOfSchoolGrade,"Dane osob znalezionych na podstawie indeksu: ");
-            }
-            delete[] serchedStudentsTab;
-            break;
-        }
-
-        case 2:{
-            string nameSerched = "";
-            cout << "Podaj imie szukanej osoby " << endl;
-            cin >> nameSerched;
-            int searchCouter = 0;
-            for(int i=0; i<N; i++){
-                if(nameSerched == tab[i].imie){
-                    searchCouter ++;
+                if(counter == 0){
+                    cout << "Nie znalezniono. Brak danych" << endl;
+                } else {
+                    displayStudentsData(serchedStudentsTab, counter, numberOfSchoolGrade,"Dane osob znalezionych na podstawie indeksu: ");
                 }
-            }
-            STUDENT* serchedStudentsTab = new STUDENT[searchCouter];
-            int counter = 0;
-            for(int i=0; i<N; i++){
-                if(nameSerched == tab[i].imie){
-                    serchedStudentsTab[counter] = tab[i];
-                    counter++;
-                }
-            }
-            if(counter == 0){
-                cout << "Nie znalezniono. Brak danych" << endl;
-            } else {
-                displayStudentsData(serchedStudentsTab, counter, numberOfSchoolGrade,"Dane osob znalezionych na podstawie imienia: ");
-            }
-            delete[] serchedStudentsTab;
-            break;
-        }
-
-        case 3:{
-            string nameSerched = "";
-            cout << "Podaj nazwisko szukanej osoby " << endl;
-            cin >> nameSerched;
-            int searchCouter = 0;
-            for(int i=0; i<N; i++){
-                if(nameSerched == tab[i].nazwisko){
-                    searchCouter ++;
-                }
-            }
-            STUDENT* serchedStudentsTab = new STUDENT[searchCouter];
-            int counter = 0;
-            for(int i=0; i<N; i++){
-                if(nameSerched == tab[i].nazwisko){
-                    serchedStudentsTab[counter] = tab[i];
-                    counter++;
-                }
-            }
-            if(counter == 0){
-                cout << "Nie znalezniono. Brak danych" << endl;
-            } else {
-                displayStudentsData(serchedStudentsTab, counter, numberOfSchoolGrade,"Dane osob znalezionych na podstawie nazwiska: ");
+                delete[] serchedStudentsTab;
+                break;
             }
 
-            delete[] serchedStudentsTab;
-            break;
-        }
+            case 2:{
+                string nameSerched = "";
+                cout << "Podaj imie szukanej osoby " << endl;
+                cin >> nameSerched;
+                int searchCouter = 0;
+                for(int i=0; i<N; i++){
+                    if(nameSerched == tab[i].imie){
+                        searchCouter ++;
+                    }
+                }
+                STUDENT* serchedStudentsTab = new STUDENT[searchCouter];
+                int counter = 0;
+                for(int i=0; i<N; i++){
+                    if(nameSerched == tab[i].imie){
+                        serchedStudentsTab[counter] = tab[i];
+                        counter++;
+                    }
+                }
+                if(counter == 0){
+                    cout << "Nie znalezniono. Brak danych" << endl;
+                } else {
+                    displayStudentsData(serchedStudentsTab, counter, numberOfSchoolGrade,"Dane osob znalezionych na podstawie imienia: ");
+                }
+                delete[] serchedStudentsTab;
+                break;
+            }
 
-        case 4:{
+            case 3:{
+                string nameSerched = "";
+                cout << "Podaj nazwisko szukanej osoby " << endl;
+                cin >> nameSerched;
+                int searchCouter = 0;
+                for(int i=0; i<N; i++){
+                    if(nameSerched == tab[i].nazwisko){
+                        searchCouter ++;
+                    }
+                }
+                STUDENT* serchedStudentsTab = new STUDENT[searchCouter];
+                int counter = 0;
+                for(int i=0; i<N; i++){
+                    if(nameSerched == tab[i].nazwisko){
+                        serchedStudentsTab[counter] = tab[i];
+                        counter++;
+                    }
+                }
+                if(counter == 0){
+                    cout << "Nie znalezniono. Brak danych" << endl;
+                } else {
+                    displayStudentsData(serchedStudentsTab, counter, numberOfSchoolGrade,"Dane osob znalezionych na podstawie nazwiska: ");
+                }
+
+                delete[] serchedStudentsTab;
+                break;
+            }
+
+            case 4:{
+                int fail = 1;
+                double minAvg = 0;
+                double maxAvg = 0;
+                while (fail != 0){
+                    cout << "Podaj dolna granice sredniej " << endl;
+                    cin >> minAvg;
+                    cout << "Podaj gorna granice sredniej " << endl;
+                    cin >> maxAvg;
+                    if ( minAvg > maxAvg ){
+                        cout << "Podana maksymalna wartosc jest mniejsza od minimalnej. Sprobuj ponownie" << endl;
+                        fail = 1;
+                    } else {
+                        fail = 0;
+                        int searchCouter = 0;
+                        for(int i=0; i<N; i++){
+                            if(tab[i].srednia >= minAvg && tab[i].srednia <= maxAvg){
+                                searchCouter ++;
+                            }
+                        }
+                        STUDENT* serchedStudentsTab = new STUDENT[searchCouter];
+                        int counter = 0;
+                        for(int i=0; i<N; i++){
+                            if(tab[i].srednia >= minAvg && tab[i].srednia <= maxAvg){
+                                serchedStudentsTab[counter] = tab[i];
+                                counter++;
+                            }
+                        }
+                        if(counter == 0){
+                            cout << "Nie znalezniono. Brak danych" << endl;
+                        } else {
+                            displayStudentsData(serchedStudentsTab, counter, numberOfSchoolGrade,"Dane osob znalezionych na podstawie sredniej: ");
+                        }
+                        delete[] serchedStudentsTab;
+                    }
+                }
+                break;
+            }
+
+            case 5:{
             int fail = 1;
-            double minAvg = 0;
-            double maxAvg = 0;
+            double minRaiting = 0;
+            double maxRaiting = 0;
             while (fail != 0){
-                cout << "Podaj dolna granice sredniej " << endl;
-                cin >> minAvg;
-                cout << "Podaj gorna granice sredniej " << endl;
-                cin >> maxAvg;
-                if ( minAvg > maxAvg ){
+                cout << "Podaj dolna granice oceny " << endl;
+                cin >> minRaiting;
+                cout << "Podaj gorna granice oceny " << endl;
+                cin >> maxRaiting;
+                if ( minRaiting > maxRaiting ){
                     cout << "Podana maksymalna wartosc jest mniejsza od minimalnej. Sprobuj ponownie" << endl;
                     fail = 1;
                 } else {
                     fail = 0;
                     int searchCouter = 0;
                     for(int i=0; i<N; i++){
-                        if(tab[i].srednia >= minAvg && tab[i].srednia <= maxAvg){
-                            searchCouter ++;
+                        bool hasRaiting = false;
+                        for(int j=0; j < numberOfSchoolGrade; j++){
+                            if(tab[i].oceny[j] >= minRaiting && tab[i].oceny[j] <= maxRaiting){
+                                hasRaiting = true;
+                            }
+                        }
+                        if(hasRaiting){
+                            searchCouter++;
                         }
                     }
                     STUDENT* serchedStudentsTab = new STUDENT[searchCouter];
                     int counter = 0;
                     for(int i=0; i<N; i++){
-                        if(tab[i].srednia >= minAvg && tab[i].srednia <= maxAvg){
+                        bool hasRaiting = false;
+                        for(int j=0; j < numberOfSchoolGrade; j++){
+                            if(tab[i].oceny[j] >= minRaiting && tab[i].oceny[j] <= maxRaiting){
+                                hasRaiting = true;
+                            }
+                        }
+                        if(hasRaiting){
                             serchedStudentsTab[counter] = tab[i];
                             counter++;
                         }
                     }
+                    
                     if(counter == 0){
                         cout << "Nie znalezniono. Brak danych" << endl;
                     } else {
                         displayStudentsData(serchedStudentsTab, counter, numberOfSchoolGrade,"Dane osob znalezionych na podstawie sredniej: ");
                     }
                     delete[] serchedStudentsTab;
+                    }
                 }
+                break;
             }
-            break;
-        }
-
-        case 5:{
-        int fail = 1;
-        double minRaiting = 0;
-        double maxRaiting = 0;
-        while (fail != 0){
-            cout << "Podaj dolna granice oceny " << endl;
-            cin >> minRaiting;
-            cout << "Podaj gorna granice oceny " << endl;
-            cin >> maxRaiting;
-            if ( minRaiting > maxRaiting ){
-                cout << "Podana maksymalna wartosc jest mniejsza od minimalnej. Sprobuj ponownie" << endl;
-                fail = 1;
-            } else {
-                fail = 0;
-                int searchCouter = 0;
-                for(int i=0; i<N; i++){
-                    bool hasRaiting = false;
-                    for(int j=0; j < numberOfSchoolGrade; j++){
-                        if(tab[i].oceny[j] >= minRaiting && tab[i].oceny[j] <= maxRaiting){
-                            hasRaiting = true;
-                        }
-                    }
-                    if(hasRaiting){
-                        searchCouter++;
-                    }
-                }
-                STUDENT* serchedStudentsTab = new STUDENT[searchCouter];
-                int counter = 0;
-                for(int i=0; i<N; i++){
-                    bool hasRaiting = false;
-                    for(int j=0; j < numberOfSchoolGrade; j++){
-                        if(tab[i].oceny[j] >= minRaiting && tab[i].oceny[j] <= maxRaiting){
-                            hasRaiting = true;
-                        }
-                    }
-                    if(hasRaiting){
-                        serchedStudentsTab[counter] = tab[i];
-                        counter++;
-                    }
-                }
-                
-                if(counter == 0){
-                    cout << "Nie znalezniono. Brak danych" << endl;
-                } else {
-                    displayStudentsData(serchedStudentsTab, counter, numberOfSchoolGrade,"Dane osob znalezionych na podstawie sredniej: ");
-                }
-                delete[] serchedStudentsTab;
-                }
-            }
-            break;
         }
     }
+    cout << endl;
 }
 
 void setStudents(STUDENT tab[], int N, bool& cantOpenFileFlag){
     string filename = "";
     cout << endl;
-    cout << "Podaj nazwe pliku do zapisanima najlepszych studentow "<< endl;
+    cout << "Podaj nazwe pliku do zapisania listy najlepszych studentow "<< endl;
     cin >> filename;
     ofstream file(filename);
     if (file.is_open()) {
@@ -433,7 +444,7 @@ int getNumberOfStudents(string filename, bool &cantOpenFileFlag) {
         return 0;
     }
     if(userInput > L){
-        cout << "Podana liczba przekracza maksymalna liczbe wczytanych studentow: " << L << endl;
+        cout << "Podana liczba przekracza maksymalna liczbe mozliwych do wczytania studentow: " << L << endl;
         return L;
     } else {
         return userInput;
