@@ -73,13 +73,14 @@ int main() {
         takeAndSortStudents(tabStudents, tabBestStudents, N, avgRaitingAll);
 
 
-        displayStudentsData(tabBestStudents, numSutudentsOverAvg, numberOfSchoolGrade,"Posortowane dane najlepszych studentow (powyzej sredniej) wedlug sredniej ");
+        if(numSutudentsOverAvg > 0){
+            displayStudentsData(tabBestStudents, numSutudentsOverAvg, numberOfSchoolGrade,"Posortowane dane najlepszych studentow (powyzej sredniej) wedlug sredniej ");
 
-        setStudents(tabBestStudents, numSutudentsOverAvg, cantOpenFileFlag);
-        if(cantOpenFileFlag == true){
-            return 0;
+            setStudents(tabBestStudents, numSutudentsOverAvg, cantOpenFileFlag);
+            if(cantOpenFileFlag == true){
+                return 0;
+            }
         }
-
         search(tabStudents, N, numberOfSchoolGrade);
 
         delete[] tabStudents;
@@ -430,7 +431,9 @@ void randomSchoolGrade(STUDENT tab[], int N, int minNum, int maxNum, int numberO
 int getNumberOfStudents(string filename, bool &cantOpenFileFlag) {
     ifstream file(filename);
     int L = 0;
+    int reset = 1;
     int userInput = 0;
+    while (reset != 0){
     cout << "Ilu chcesz wczytac studentow? " << endl;
     cin >> userInput;
     if (file.is_open()) {
@@ -442,6 +445,14 @@ int getNumberOfStudents(string filename, bool &cantOpenFileFlag) {
         cout << "Ups, cos poszlo nie tak. Nie moge otworzyc pliku. Zamykam." << endl;
         cantOpenFileFlag = true;
         return 0;
+    }
+    if(userInput < 1){
+        cout << endl;
+        cout << "Podana liczba jest mniejsza niz 1 nie można pobrac takiej liczby studenow. Sprobuj jeszcze raz " << endl;
+        reset = 1;
+    } else {
+        reset = 0;
+    }
     }
     if(userInput > L){
         cout << "Podana liczba przekracza maksymalna liczbe mozliwych do wczytania studentow: " << L << endl;
